@@ -1,0 +1,9 @@
+environment: production
+application:
+  host: 0.0.0.0
+  port: 3000
+database:
+  host: surrealdb
+  port: 8000
+logger:
+  level: info

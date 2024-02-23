@@ -1,0 +1,33 @@
+[package]
+name = "circuit_chronicle"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "circuit_chronicle"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.7.3"
+serde = { version = "1.0.193", features = ["derive"] }
+tokio = { version = "1.35.1", features = ["full"] }
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter", "json"] }
+tower-http = { version = "0.5.0", features = ["trace", "cors"] }
+serde_json = "1.0.111"
+surrealdb = "1.1.0"
+deadpool = "0.10.0"
+surreal = "0.4.1"
+config = "0.14.0"
+lazy_static = "1.4.0"
+uuid = "1.7.0"
+temp-env = "0.3.6"
+
+[dev-dependencies]
+reqwest = { version = "0.11.23", features = ["serde_json", "json"] }
+tower = { version = "0.4", features = ["util"] }

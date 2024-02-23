@@ -1,0 +1,27 @@
+use circuit_chronicle::app::create_app;
+use circuit_chronicle::settings::{Settings, SETTINGS};
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+
+#[tokio::main]
+async fn main() {
+    let config = Settings::new().expect("Failed to load settings");
+    let app = create_app(config);
+
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "circuit_chronicle=debug,tower_http=debug".into()),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
+    let port = &SETTINGS.application.port;
+    let host = &SETTINGS.application.host;
+    let listener = tokio::net::TcpListener::bind(&format!("{}:{}", host, port))
+        .await
+        .expect("Could not listen to port");
+    tracing::debug!("listening on {}", listener.local_addr().unwrap());
+    axum::serve(listener, app)
+        .await
+        .expect("Failed to start server");
+}
