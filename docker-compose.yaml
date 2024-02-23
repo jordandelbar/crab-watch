@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  frontend-app:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    env_file:
+      - path: ./.env
+        required: true
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend-app
+
+  backend-app:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    env_file:
+      - path: ./.env
+        required: true
+    ports:
+      - "3000:3000"
+    depends_on:
+      - surrealdb
+    networks:
+      - backend
+
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    command: start --log trace --auth --user root --pass root
+    expose:
+      - "8000"
+    restart: always
+    networks:
+      - backend
+networks:
+  backend:
