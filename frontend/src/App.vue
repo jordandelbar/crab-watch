@@ -72,7 +72,7 @@ export default {
       axios.get(`${BASE_URL}:${BASE_PORT}/api/v1/crabs`)
         .then(response => {
           crabs.value = response.data;
-          generateRandomPositions(); // Update crab positions
+          generateRandomPositions();
         })
         .catch(error => {
           console.error('Error fetching crabs:', error);
@@ -82,9 +82,8 @@ export default {
     const addCrab = () => {
       axios.post(`${BASE_URL}:${BASE_PORT}/api/v1/crabs`, newCrab.value)
         .then(() => {
-          fetchCrabs(); // Refresh the list of crabs
-          newCrab.value = { name: '', description: '' }; // Clear form fields
-          // generateRandomPositions(); // Update crab positions
+          fetchCrabs();
+          newCrab.value = { name: '', description: '' };
         })
         .catch(error => {
           console.error('Error adding crab:', error);
@@ -94,7 +93,7 @@ export default {
     const deleteCrab = (id) => {
       axios.delete(`${BASE_URL}:${BASE_PORT}/api/v1/crabs/${id}`)
         .then(() => {
-          fetchCrabs(); // Refresh the list of crabs after deletion
+          fetchCrabs();
         })
         .catch(error => {
           console.error('Error deleting crab:', error);
@@ -104,7 +103,7 @@ export default {
     const updateCrab = (crab) => {
       axios.post(`${BASE_URL}:${BASE_PORT}/api/v1/crabs/${crab.id.id.String}`, crab)
         .then(() => {
-          fetchCrabs(); // Refresh the list of crabs after update
+          fetchCrabs();
         })
         .catch(error => {
           console.error('Error updating crab:', error);
@@ -123,14 +122,14 @@ export default {
       crabImagesTop.value = Math.random() * (window.innerHeight - 100);
       crabImagesLeft.value = Math.random() * (window.innerWidth - 100);
       crabs.value.forEach(crab => {
-        crab.top = Math.random() * (window.innerHeight - 100); // Adjust as needed to ensure entire crab image is visible
-        crab.left = Math.random() * (window.innerWidth - 100); // Adjust as needed to ensure entire crab image is visible
+        crab.top = Math.random() * (window.innerHeight - 100);
+        crab.left = Math.random() * (window.innerWidth - 100);
       });
     };
 
     onMounted(() => {
       fetchCrabs();
-      generateRandomPositions(); // Generate random positions when the component is mounted
+      generateRandomPositions();
     });
 
     return {
@@ -286,7 +285,6 @@ h1 {
 .crab-picture {
   position: absolute;
   bottom: 0;
-  /* Align the bottom of crab pictures with the bottom of the crab cards */
 }
 
 .crab-picture {
@@ -297,8 +295,6 @@ h1 {
 
 .crab-image {
   width: 50px;
-  /* Ensure the image spans the whole container */
   height: auto;
-  /* Maintain aspect ratio */
 }
 </style>
