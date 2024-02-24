@@ -1,19 +1,14 @@
 use config::{Config, ConfigError, Environment, File};
-use lazy_static::lazy_static;
 use serde::Deserialize;
 use std::env;
 
-lazy_static! {
-    pub static ref SETTINGS: Settings = Settings::new().expect("Failed to setup settings");
-}
-
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Application {
     pub host: String,
     pub port: u16,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Database {
     pub host: String,
     pub port: u16,
@@ -23,12 +18,12 @@ pub struct Database {
     pub dbname: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Logger {
     pub level: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Settings {
     pub environment: String,
     pub application: Application,
