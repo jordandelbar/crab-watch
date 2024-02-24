@@ -32,21 +32,19 @@
         </div>
       </div>
     </div>
+    <div class="crab-pictures">
+      <div v-for="(_, index) in crabs" :key="index" class="crab-picture">
+        <div class="crab-image-container">
+          <img src="@/assets/crab.png" alt="Crab Image" class="crab-image">
+        </div>
+      </div>
+    </div>
     <div class="add-crab-section">
       <input v-model="newCrab.name" placeholder="Enter name">
       <input v-model="newCrab.description" placeholder="Enter description">
       <button @click="addCrab">
         <i class="fas fa-plus"></i> Add Crab
       </button>
-    </div>
-    <div class="crab-picture1">
-      <img src="@/assets/crab.png" alt="Crab Image 1">
-    </div>
-    <div class="crab-picture2">
-      <img src="@/assets/crab.png" alt="Crab Image 2">
-    </div>
-    <div class="crab-picture3">
-      <img src="@/assets/crab.png" alt="Crab Image 3">
     </div>
   </div>
 </template>
@@ -78,6 +76,7 @@ export default {
         .then(() => {
           fetchCrabs(); // Refresh the list of crabs
           newCrab.value = { name: '', description: '' }; // Clear form fields
+          positionCrabPictures();
         })
         .catch(error => {
           console.error('Error adding crab:', error);
@@ -111,6 +110,17 @@ export default {
       }
     };
 
+    // Function to position crab pictures randomly
+    const positionCrabPictures = () => {
+      const crabPictures = document.querySelectorAll('.crab-picture');
+      crabPictures.forEach(crabPicture => {
+        const randomPositionTop = Math.random() * 80; // Random top position (0-80%)
+        const randomPositionLeft = Math.random() * 80; // Random left position (0-80%)
+        crabPicture.style.top = `${randomPositionTop}%`;
+        crabPicture.style.left = `${randomPositionLeft}%`;
+      });
+    };
+
     fetchCrabs(); // Fetch initial list of crabs when component is mounted
 
     return {
@@ -119,7 +129,8 @@ export default {
       addCrab,
       deleteCrab,
       updateCrab,
-      toggleEdit
+      toggleEdit,
+      positionCrabPictures
     };
   }
 };
@@ -178,7 +189,6 @@ h1 {
 .add-crab-section {
   margin-top: 20px;
   text-align: center;
-  /* Center the input section */
 }
 
 .add-crab-section input[type="text"],
@@ -247,39 +257,36 @@ h1 {
   transition: opacity 0.3s;
 }
 
-.crab-picture1 {
+.crab-pictures {
   position: absolute;
-  top: 50%;
-  right: 200px;
-  transform: translateY(-50%);
+  top: 0;
+  /* Choose either left or right positioning */
+  left: 0;
+  /* To position on the left */
+  /* or */
+  right: 0;
+  /* To position on the right */
+  /* Adjust as needed */
 }
 
-.crab-picture1 img {
-  width: 80px;
-  height: auto;
-}
-
-.crab-picture2 {
+.crab-picture {
   position: absolute;
-  top: 20%;
-  left: 200px;
-  transform: translateY(-50%);
+  bottom: 0;
+  /* Align the bottom of crab pictures with the bottom of the crab cards */
 }
 
-.crab-picture2 img {
-  width: 80px;
+.crab-image-container {
+  position: relative;
+  width: 50px;
+  /* Adjust size as needed */
   height: auto;
+  /* Maintain aspect ratio */
 }
 
-.crab-picture3 {
-  position: absolute;
-  top: 80%;
-  left: 200px;
-  transform: translateY(-50%);
-}
-
-.crab-picture3 img {
-  width: 80px;
+.crab-image {
+  width: 100%;
+  /* Ensure the image spans the whole container */
   height: auto;
+  /* Maintain aspect ratio */
 }
 </style>
