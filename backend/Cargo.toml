@@ -24,7 +24,6 @@ surrealdb = "1.1.0"
 deadpool = "0.10.0"
 surreal = "0.4.1"
 config = "0.14.0"
-lazy_static = "1.4.0"
 uuid = "1.7.0"
 temp-env = "0.3.6"
 
