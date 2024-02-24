@@ -39,6 +39,15 @@
         <i class="fas fa-plus"></i> Add Crab
       </button>
     </div>
+    <div class="crab-picture1">
+      <img src="@/assets/crab.png" alt="Crab Image 1">
+    </div>
+    <div class="crab-picture2">
+      <img src="@/assets/crab.png" alt="Crab Image 2">
+    </div>
+    <div class="crab-picture3">
+      <img src="@/assets/crab.png" alt="Crab Image 3">
+    </div>
   </div>
 </template>
 
@@ -126,7 +135,7 @@ export default {
 .background {
   width: 100vw;
   height: 100vh;
-  background-image: url('/public/crab.jpg');
+  background-image: url('/public/wave.svg');
   background-size: cover;
   background-position: center;
   overflow-y: auto;
@@ -134,6 +143,7 @@ export default {
 
 h1 {
   text-align: center;
+  color: white;
 }
 
 .crab-cards-container {
@@ -235,5 +245,41 @@ h1 {
   font-size: 1.5em;
   opacity: 0.0;
   transition: opacity 0.3s;
+}
+
+.crab-picture1 {
+  position: absolute;
+  top: 50%;
+  right: 200px;
+  transform: translateY(-50%);
+}
+
+.crab-picture1 img {
+  width: 80px;
+  height: auto;
+}
+
+.crab-picture2 {
+  position: absolute;
+  top: 20%;
+  left: 200px;
+  transform: translateY(-50%);
+}
+
+.crab-picture2 img {
+  width: 80px;
+  height: auto;
+}
+
+.crab-picture3 {
+  position: absolute;
+  top: 80%;
+  left: 200px;
+  transform: translateY(-50%);
+}
+
+.crab-picture3 img {
+  width: 80px;
+  height: auto;
 }
 </style>
