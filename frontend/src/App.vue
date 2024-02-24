@@ -1,56 +1,61 @@
 <template>
   <div class="background">
-    <h1>Crabs</h1>
-    <div v-for="crab in crabs" :key="crab.id">
-      <div v-if="!crab.editable">
-        <div class="crab-card">
-          <div class="crab-card-header">
-            <button class="edit-icon" @click="toggleEdit(crab.id)">
-              <i class="fas fa-pencil-alt fa-2xs"></i>
-            </button>
-            <button class="delete-icon" @click="deleteCrab(crab.id.id.String)">
-              <i class="fas fa-times-circle fa-2xs"></i>
-            </button>
-          </div>
-          <div class="crab-card-content">
-            <h2>{{ crab.name }}</h2>
-            <p>{{ crab.description }}</p>
-          </div>
-        </div>
-      </div>
-      <div v-else>
-        <div class="crab-card">
-          <div class="crab-card-header">
-            <button class="save-icon" @click="updateCrab(crab)">
-              <i class="fas fa-save"></i>
-            </button>
-          </div>
-          <div class="crab-card-content">
-            <input v-model="crab.name" placeholder="Enter name">
-            <textarea v-model="crab.description" placeholder="Enter description"></textarea>
+    <div class="crab-images" :style="{ top: `${crabImagesTop}px`, left: `${crabImagesLeft}px` }">
+      <div class="crab-pictures">
+        <div v-for="(crab, index) in crabs" :key="index" class="crab-picture"
+          :style="{ top: `${crab.top}px`, left: `${crab.left}px` }">
+          <div class="crab-image-container">
+            <img src="@/assets/crab.png" alt="Crab Image" class="crab-image">
           </div>
         </div>
       </div>
     </div>
-    <div class="crab-pictures">
-      <div v-for="(_, index) in crabs" :key="index" class="crab-picture">
-        <div class="crab-image-container">
-          <img src="@/assets/crab.png" alt="Crab Image" class="crab-image">
+    <div class="crab-cards">
+      <h1>Crabs</h1>
+      <div v-for="crab in crabs" :key="crab.id">
+        <div v-if="!crab.editable">
+          <div class="crab-card">
+            <div class="crab-card-header">
+              <button class="edit-icon" @click="toggleEdit(crab.id)">
+                <i class="fas fa-pencil-alt fa-2xs"></i>
+              </button>
+              <button class="delete-icon" @click="deleteCrab(crab.id.id.String)">
+                <i class="fas fa-times-circle fa-2xs"></i>
+              </button>
+            </div>
+            <div class="crab-card-content">
+              <h2>{{ crab.name }}</h2>
+              <p>{{ crab.description }}</p>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div class="crab-card">
+            <div class="crab-card-header">
+              <button class="save-icon" @click="updateCrab(crab)">
+                <i class="fas fa-save"></i>
+              </button>
+            </div>
+            <div class="crab-card-content">
+              <input v-model="crab.name" placeholder="Enter name">
+              <textarea v-model="crab.description" placeholder="Enter description"></textarea>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="add-crab-section">
-      <input v-model="newCrab.name" placeholder="Enter name">
-      <input v-model="newCrab.description" placeholder="Enter description">
-      <button @click="addCrab">
-        <i class="fas fa-plus"></i> Add Crab
-      </button>
+      <div class="add-crab-section">
+        <input v-model="newCrab.name" placeholder="Enter name">
+        <input v-model="newCrab.description" placeholder="Enter description">
+        <button @click="addCrab">
+          <i class="fas fa-plus"></i> Add Crab
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 export default {
@@ -60,11 +65,14 @@ export default {
     const BASE_PORT = process.env.VUE_APP_API_BASE_PORT || '3000'
     const crabs = ref([]);
     const newCrab = ref({ name: '', description: '' });
+    const crabImagesTop = ref(0);
+    const crabImagesLeft = ref(0);
 
     const fetchCrabs = () => {
       axios.get(`${BASE_URL}:${BASE_PORT}/api/v1/crabs`)
         .then(response => {
           crabs.value = response.data;
+          generateRandomPositions(); // Update crab positions
         })
         .catch(error => {
           console.error('Error fetching crabs:', error);
@@ -76,7 +84,7 @@ export default {
         .then(() => {
           fetchCrabs(); // Refresh the list of crabs
           newCrab.value = { name: '', description: '' }; // Clear form fields
-          positionCrabPictures();
+          // generateRandomPositions(); // Update crab positions
         })
         .catch(error => {
           console.error('Error adding crab:', error);
@@ -110,27 +118,30 @@ export default {
       }
     };
 
-    // Function to position crab pictures randomly
-    const positionCrabPictures = () => {
-      const crabPictures = document.querySelectorAll('.crab-picture');
-      crabPictures.forEach(crabPicture => {
-        const randomPositionTop = Math.random() * 80; // Random top position (0-80%)
-        const randomPositionLeft = Math.random() * 80; // Random left position (0-80%)
-        crabPicture.style.top = `${randomPositionTop}%`;
-        crabPicture.style.left = `${randomPositionLeft}%`;
+    // Function to generate random position for crab images container and individual crabs
+    const generateRandomPositions = () => {
+      crabImagesTop.value = Math.random() * (window.innerHeight - 100);
+      crabImagesLeft.value = Math.random() * (window.innerWidth - 100);
+      crabs.value.forEach(crab => {
+        crab.top = Math.random() * (window.innerHeight - 100); // Adjust as needed to ensure entire crab image is visible
+        crab.left = Math.random() * (window.innerWidth - 100); // Adjust as needed to ensure entire crab image is visible
       });
     };
 
-    fetchCrabs(); // Fetch initial list of crabs when component is mounted
+    onMounted(() => {
+      fetchCrabs();
+      generateRandomPositions(); // Generate random positions when the component is mounted
+    });
 
     return {
       crabs,
       newCrab,
       addCrab,
+      crabImagesTop,
+      crabImagesLeft,
       deleteCrab,
       updateCrab,
-      toggleEdit,
-      positionCrabPictures
+      toggleEdit
     };
   }
 };
@@ -150,6 +161,7 @@ export default {
   background-size: cover;
   background-position: center;
   overflow-y: auto;
+  position: relative;
 }
 
 h1 {
@@ -157,9 +169,16 @@ h1 {
   color: white;
 }
 
-.crab-cards-container {
-  margin: 0 auto;
-  max-width: 1200px;
+.crab-cards {
+  float: left;
+  width: 50%;
+  height: 100vh;
+}
+
+.crab-images {
+  float: left;
+  width: 25%;
+  height: 100vh;
 }
 
 .crab-card {
@@ -260,13 +279,8 @@ h1 {
 .crab-pictures {
   position: absolute;
   top: 0;
-  /* Choose either left or right positioning */
   left: 0;
-  /* To position on the left */
-  /* or */
   right: 0;
-  /* To position on the right */
-  /* Adjust as needed */
 }
 
 .crab-picture {
@@ -275,16 +289,14 @@ h1 {
   /* Align the bottom of crab pictures with the bottom of the crab cards */
 }
 
-.crab-image-container {
-  position: relative;
-  width: 50px;
-  /* Adjust size as needed */
-  height: auto;
-  /* Maintain aspect ratio */
+.crab-picture {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
 }
 
 .crab-image {
-  width: 100%;
+  width: 50px;
   /* Ensure the image spans the whole container */
   height: auto;
   /* Maintain aspect ratio */
