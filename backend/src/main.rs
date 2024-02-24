@@ -1,5 +1,5 @@
-use circuit_chronicle::app::create_app;
-use circuit_chronicle::settings::{Settings, SETTINGS};
+use crab_watch::app::create_app;
+use crab_watch::settings::{Settings, SETTINGS};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
@@ -10,7 +10,7 @@ async fn main() {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "circuit_chronicle=debug,tower_http=debug".into()),
+                .unwrap_or_else(|_| "crab_watch=debug,tower_http=debug".into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();

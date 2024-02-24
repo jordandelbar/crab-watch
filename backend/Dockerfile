@@ -13,7 +13,7 @@ RUN apt-get update -y \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
   && apt-get clean -y \
   && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /app/target/release/circuit_chronicle /app
+COPY --from=builder /app/target/release/crab_watch /app
 COPY ./configuration /app/configuration
 ENV APP_ENVIRONMENT production
-ENTRYPOINT ["./circuit_chronicle"]
+ENTRYPOINT ["./crab_watch"]

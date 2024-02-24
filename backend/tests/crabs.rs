@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use circuit_chronicle::{app::create_app, settings::Settings};
+    use crab_watch::{app::create_app, settings::Settings};
     use serde_json::json;
     use tokio::net::TcpListener;
 

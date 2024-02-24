@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use circuit_chronicle::{app::create_app, settings::Settings};
+    use crab_watch::{app::create_app, settings::Settings};
     use tokio::net::TcpListener;
 
     async fn spawn_app() -> std::net::SocketAddr {
