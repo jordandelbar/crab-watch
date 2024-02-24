@@ -1,27 +1,41 @@
-use crab_watch::app::create_app;
-use crab_watch::settings::{Settings, SETTINGS};
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use crab_watch::app::Application;
+use crab_watch::settings::Settings;
+use std::fmt::{Debug, Display};
+use tokio::task::JoinError;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> anyhow::Result<()> {
     let config = Settings::new().expect("Failed to load settings");
-    let app = create_app(config);
+    let app = Application::build(config.clone()).await?;
+    let app_task = tokio::spawn(app.run_until_stopped());
 
-    tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "crab_watch=debug,tower_http=debug".into()),
-        )
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+    tokio::select! {
+        o = app_task => report_exit("API", o),
+    };
 
-    let port = &SETTINGS.application.port;
-    let host = &SETTINGS.application.host;
-    let listener = tokio::net::TcpListener::bind(&format!("{}:{}", host, port))
-        .await
-        .expect("Could not listen to port");
-    tracing::debug!("listening on {}", listener.local_addr().unwrap());
-    axum::serve(listener, app)
-        .await
-        .expect("Failed to start server");
+    Ok(())
+}
+
+fn report_exit(task_name: &str, outcome: Result<Result<(), impl Debug + Display>, JoinError>) {
+    match outcome {
+        Ok(Ok(())) => {
+            tracing::info!("{} has exited", task_name)
+        }
+        Ok(Err(e)) => {
+            tracing::error!(
+                error.cause_chain = ?e,
+                error.message = %e,
+                "{} failed",
+                task_name
+            )
+        }
+        Err(e) => {
+            tracing::error!(
+                error.cause_chain = ?e,
+                error.message = %e,
+                "{}' task failed to complete",
+                task_name
+            )
+        }
+    }
 }
