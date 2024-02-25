@@ -1,11 +1,6 @@
 use config::{Config, ConfigError, Environment, File};
-use lazy_static::lazy_static;
 use serde::Deserialize;
 use std::env;
-
-lazy_static! {
-    pub static ref SETTINGS: Settings = Settings::new().expect("Failed to setup settings");
-}
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Application {
