@@ -121,6 +121,14 @@ impl ResponseError for NewCrabError {
     }
 }
 
+#[tracing::instrument(
+    name = "Adding a new crab",
+    skip(pool, payload),
+    fields(
+        crab_name = %payload.name,
+        crab_description = %payload.description
+    )
+)]
 pub async fn create_crab(
     pool: Data<Pool>,
     payload: web::Json<Payload>,
@@ -143,6 +151,7 @@ pub async fn create_crab(
     Ok(HttpResponse::Ok().finish())
 }
 
+#[tracing::instrument(name = "List crabs", skip(pool))]
 pub async fn list_crab(pool: Data<Pool>) -> impl Responder {
     let conn = pool
         .get()
@@ -157,6 +166,14 @@ pub async fn list_crab(pool: Data<Pool>) -> impl Responder {
     web::Json(crabs)
 }
 
+#[tracing::instrument(
+    name = "Adding a new crab",
+    skip(pool, path, payload),
+    fields(
+        crab_name = %payload.name,
+        crab_description = %payload.description
+    )
+)]
 pub async fn update_crab(
     pool: Data<Pool>,
     path: web::Path<String>,
@@ -181,6 +198,7 @@ pub async fn update_crab(
     Ok(HttpResponse::Ok().finish())
 }
 
+#[tracing::instrument(name = "Delete crab", skip(pool, path))]
 pub async fn delete_crab(pool: Data<Pool>, path: web::Path<String>) -> impl Responder {
     let conn = pool
         .get()
@@ -196,6 +214,7 @@ pub async fn delete_crab(pool: Data<Pool>, path: web::Path<String>) -> impl Resp
     web::Json(serde_json::json!({"response": format!("{} record deleted", &id)}))
 }
 
+#[tracing::instrument(name = "Read crab", skip(pool, path))]
 pub async fn read_crab(pool: Data<Pool>, path: web::Path<String>) -> impl Responder {
     let conn = pool
         .get()
