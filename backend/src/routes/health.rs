@@ -1,13 +1,5 @@
-use axum::response::{IntoResponse, Json};
-use serde::{Deserialize, Serialize};
+use actix_web::HttpResponse;
 
-pub async fn health_check() -> impl IntoResponse {
-    Json(Status {
-        status: String::from("ok"),
-    })
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Status {
-    status: String,
+pub async fn health_check() -> HttpResponse {
+    HttpResponse::Ok().finish()
 }

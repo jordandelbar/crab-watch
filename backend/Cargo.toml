@@ -13,9 +13,11 @@ name = "crab_watch"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = "0.7.3"
+actix-web = { version = "4.5.1" }
+actix-cors = { version = "0.7.0" }
+anyhow = { version = "1.0.80" }
 serde = { version = "1.0.193", features = ["derive"] }
-tokio = { version = "1.35.1", features = ["full"] }
+tokio = { version = "1.35.1", features = ["macros", "rt-multi-thread"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter", "json"] }
 tower-http = { version = "0.5.0", features = ["trace", "cors"] }
@@ -26,6 +28,11 @@ surreal = "0.4.1"
 config = "0.14.0"
 uuid = "1.7.0"
 temp-env = "0.3.6"
+unicode-segmentation = "1.11.0"
+thiserror = "1.0.57"
+tracing-actix-web = "0.7.9"
+tracing-bunyan-formatter = "0.3.9"
+tracing-log = "0.2.0"
 
 [dev-dependencies]
 reqwest = { version = "0.11.23", features = ["serde_json", "json"] }
