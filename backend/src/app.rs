@@ -1,6 +1,11 @@
 use crate::database::{Manager, Pool};
-use crate::routes::health::health_check;
+use crate::routes::{
+    crabs::{create_crab, list_crab},
+    health::health_check,
+};
+use crate::routes::{delete_crab, update_crab};
 use crate::settings::Settings;
+use actix_cors::Cors;
 use actix_web::dev::Server;
 use actix_web::web::Data;
 use actix_web::{web, App, HttpServer};
@@ -37,7 +42,17 @@ async fn run(listener: TcpListener, pool: Pool) -> Result<Server, anyhow::Error>
     let shared_pool = Data::new(pool);
     let server = HttpServer::new(move || {
         App::new()
+            .wrap(Cors::permissive())
             .route("/health", web::get().to(health_check))
+            .service(
+                web::scope("/api").service(
+                    web::scope("/v1")
+                        .route("/crabs", web::get().to(list_crab))
+                        .route("/crabs", web::post().to(create_crab))
+                        .route("/crabs/{path}", web::delete().to(delete_crab))
+                        .route("/crabs/{path}", web::post().to(update_crab)),
+                ),
+            )
             .app_data(shared_pool.clone())
     })
     .listen(listener)?

@@ -1,11 +1,7 @@
 use crate::database::Pool;
-use axum::{
-    extract::Path,
-    response::{IntoResponse, Json},
-    routing::{delete, get, post},
-    Extension, Router,
-};
-use std::sync::Arc;
+use actix_web::web;
+use actix_web::web::Data;
+use actix_web::Responder;
 use surrealdb::opt::RecordId;
 use uuid::Uuid;
 
@@ -22,16 +18,7 @@ pub struct Crab {
     pub description: String,
 }
 
-pub fn crabs_routes() -> Router {
-    Router::new()
-        .route("/crabs", post(create_crab))
-        .route("/crabs", get(list_crab))
-        .route("/crabs/:id", get(read_crab))
-        .route("/crabs/:id", post(update_crab))
-        .route("/crabs/:id", delete(delete_crab))
-}
-
-pub async fn create_crab(pool: Extension<Arc<Pool>>, payload: Json<Payload>) -> impl IntoResponse {
+pub async fn create_crab(pool: Data<Pool>, payload: web::Json<Payload>) -> impl Responder {
     let conn = pool
         .get()
         .await
@@ -46,11 +33,10 @@ pub async fn create_crab(pool: Extension<Arc<Pool>>, payload: Json<Payload>) -> 
         })
         .await
         .expect("Failed to create record");
-    // Json(serde_json::json!({"data": payload.name, "description": payload.description}))
-    Json(serde_json::json!({"response": format!("{} record created", id)}))
+    web::Json(serde_json::json!({"response": format!("{} record created", id)}))
 }
 
-pub async fn list_crab(pool: Extension<Arc<Pool>>) -> impl IntoResponse {
+pub async fn list_crab(pool: Data<Pool>) -> impl Responder {
     let conn = pool
         .get()
         .await
@@ -61,19 +47,20 @@ pub async fn list_crab(pool: Extension<Arc<Pool>>) -> impl IntoResponse {
         .await
         .expect("Failed to retrieve records");
 
-    Json(crabs)
+    web::Json(crabs)
 }
 
 pub async fn update_crab(
-    pool: Extension<Arc<Pool>>,
-    Path(id): Path<String>,
-    payload: Json<Payload>,
-) -> impl IntoResponse {
+    pool: Data<Pool>,
+    path: web::Path<String>,
+    payload: web::Json<Payload>,
+) -> impl Responder {
     let conn = pool
         .get()
         .await
         .expect("Failed to get connection from pool");
 
+    let id = path.into_inner();
     let _record: Option<Payload> = conn
         .update(("crab", &id))
         .content(Payload {
@@ -83,33 +70,34 @@ pub async fn update_crab(
         .await
         .expect("Failed to update record");
 
-    Json(serde_json::json!({"response": format!("{} record updated", id)}))
+    web::Json(serde_json::json!({"response": format!("{} record updated", &id)}))
 }
 
-pub async fn delete_crab(pool: Extension<Arc<Pool>>, Path(id): Path<String>) -> impl IntoResponse {
+pub async fn delete_crab(pool: Data<Pool>, path: web::Path<String>) -> impl Responder {
     let conn = pool
         .get()
         .await
         .expect("Failed to get connection from pool");
 
+    let id = path.into_inner();
     let _: Option<Crab> = conn
         .delete(("crab", &id))
         .await
         .expect("Failed to delete record");
 
-    Json(serde_json::json!({"response": format!("{} record deleted", id)}))
+    web::Json(serde_json::json!({"response": format!("{} record deleted", &id)}))
 }
 
-pub async fn read_crab(pool: Extension<Arc<Pool>>, Path(id): Path<String>) -> impl IntoResponse {
+pub async fn read_crab(pool: Data<Pool>, path: web::Path<String>) -> impl Responder {
     let conn = pool
         .get()
         .await
         .expect("Failed to get connection from pool");
 
     let crab: Option<Crab> = conn
-        .select(("crab", id))
+        .select(("crab", path.into_inner()))
         .await
         .expect("Failed to retrieve record");
 
-    Json(crab)
+    web::Json(crab)
 }
