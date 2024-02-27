@@ -9,6 +9,7 @@ use actix_cors::Cors;
 use actix_web::dev::Server;
 use actix_web::web::Data;
 use actix_web::{web, App, HttpServer};
+use actix_web_prom::PrometheusMetricsBuilder;
 use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
 
@@ -41,9 +42,15 @@ impl Application {
 
 async fn run(listener: TcpListener, pool: Pool) -> Result<Server, anyhow::Error> {
     let shared_pool = Data::new(pool);
+    let prometheus = PrometheusMetricsBuilder::new("api")
+        .endpoint("/metrics")
+        .build()
+        .unwrap();
+
     let server = HttpServer::new(move || {
         App::new()
             .wrap(Cors::permissive())
+            .wrap(prometheus.clone())
             .wrap(TracingLogger::default())
             .route("/health", web::get().to(health_check))
             .service(
