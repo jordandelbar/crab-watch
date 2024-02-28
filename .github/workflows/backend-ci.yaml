@@ -41,7 +41,7 @@ jobs:
         run: cargo check
 
       - name: Run cargo clippy
-        run: clippy -- -D warnings
+        run: cargo clippy -- -D warnings
 
       - name: Run cargo test
         run: cargo test
