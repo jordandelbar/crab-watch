@@ -29,9 +29,9 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: |
-            ~/backend/.cargo/registry
-            ~/backend/.cargo/git
-            target
+            ~/.cargo/registry
+            ~/.cargo/git
+            backend/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run cargo fmt
