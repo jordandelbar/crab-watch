@@ -5,6 +5,8 @@ on: push
 defaults:
   run:
     working-directory: backend
+  with:
+    working-directory: backend
 
 jobs:
   build:
