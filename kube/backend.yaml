@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-app
+  template:
+    metadata:
+      labels:
+        app: backend-app
+    spec:
+      containers:
+        - name: backend-app
+          image: your-backend-image:1.0.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: APP_ENVIRONMENT
+              value: production
+            - name: APP_DATABASE_USERNAME
+              value: root
+            - name: APP_DATABASE_PASSWORD
+              value: root
+            - name: APP_DATABASE_NAMESPACE
+              value: test
+            - name: APP_DATABASE_DBNAME
+              value: test
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend-app
+  ports:
+    - port: 3000
+      targetPort: 3000
